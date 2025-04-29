@@ -31,7 +31,7 @@ export const useCart = () => {
   return context;
 };
 
-export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   const [items, setItems] = useState<CartItem[]>([]);
   
   // Load cart from localStorage on initial render
