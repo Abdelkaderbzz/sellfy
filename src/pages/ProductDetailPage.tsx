@@ -26,6 +26,7 @@ import {
   BreadcrumbLink,
   BreadcrumbList,
   BreadcrumbSeparator,
+  BreadcrumbPage,
 } from "@/components/ui/breadcrumb";
 import ProductGallery from "@/components/products/ProductGallery";
 import ProductCard from "@/components/products/ProductCard";
@@ -174,7 +175,7 @@ const ProductDetailPage = () => {
             )}
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbLink isCurrentPage>{product.name}</BreadcrumbLink>
+              <BreadcrumbPage>{product.name}</BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
