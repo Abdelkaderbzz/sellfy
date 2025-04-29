@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -61,7 +62,18 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
-				}
+				},
+				// E-commerce specific colors
+				brand: {
+					primary: '#6E59A5', // Main brand color
+					secondary: '#9b87f5', // Secondary brand color
+					tertiary: '#7E69AB', // Tertiary brand color
+					light: '#E5DEFF', // Light variant
+				},
+				success: '#4CAF50',
+				warning: '#FF9800',
+				info: '#2196F3',
+				error: '#ea384c',
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
@@ -84,11 +96,26 @@ export default {
 					to: {
 						height: '0'
 					}
+				},
+				'fade-in': {
+					'0%': { opacity: '0' },
+					'100%': { opacity: '1' }
+				},
+				'fade-out': {
+					'0%': { opacity: '1' },
+					'100%': { opacity: '0' }
+				},
+				'slide-in': {
+					'0%': { transform: 'translateY(20px)', opacity: '0' },
+					'100%': { transform: 'translateY(0)', opacity: '1' }
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'fade-in': 'fade-in 0.3s ease-in-out',
+				'fade-out': 'fade-out 0.3s ease-in-out',
+				'slide-in': 'slide-in 0.4s ease-out'
 			}
 		}
 	},
