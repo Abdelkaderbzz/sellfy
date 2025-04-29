@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import Layout from "@/components/layout/Layout";
@@ -33,6 +32,7 @@ import ProductCard from "@/components/products/ProductCard";
 import { products } from "@/data/mockData";
 import { Product, ProductVariant } from "@/types";
 import { toast } from "sonner";
+import { useCart } from "@/contexts/CartContext";
 
 const ProductDetailPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -76,16 +76,20 @@ const ProductDetailPage = () => {
     setSelectedVariant(variant);
   };
   
+  const { addItem } = useCart();
+  
   const handleAddToCart = () => {
     if (!product) return;
     
-    toast.success(`Added ${quantity} ${product.name} to cart`);
+    addItem(product, quantity, selectedVariant);
   };
   
   const handleBuyNow = () => {
     if (!product) return;
     
-    toast.success(`Proceeding to checkout with ${product.name}`);
+    addItem(product, quantity, selectedVariant);
+    // Redirect to checkout
+    window.location.href = "/checkout";
   };
   
   const handleAddToWishlist = () => {

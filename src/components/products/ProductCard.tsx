@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Link } from "react-router-dom";
 import { Product } from "@/types";
@@ -22,6 +21,7 @@ import {
 } from "@/components/ui/dialog";
 import ProductGallery from "./ProductGallery";
 import { Badge } from "@/components/ui/badge";
+import { useCart } from "@/contexts/CartContext";
 
 interface ProductCardProps {
   product: Product;
@@ -32,10 +32,12 @@ const ProductCard: React.FC<ProductCardProps> = ({
   product, 
   isGridView = true 
 }) => {
+  const { addItem } = useCart();
+  
   const addToCart = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    toast.success(`${product.name} added to cart!`);
+    addItem(product, 1);
   };
 
   const addToWishlist = (e: React.MouseEvent) => {
