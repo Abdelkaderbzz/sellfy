@@ -119,6 +119,13 @@
     gap: 1.5rem;
   }
   
+  @media (max-width: 640px) {
+    .product-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+    }
+  }
+  
   .product-list {
     display: flex;
     flex-direction: column;
@@ -126,15 +133,15 @@
   }
   
   .badge-sale {
-    @apply bg-red-500 text-white px-2 py-1 text-xs rounded-md font-medium;
+    @apply bg-red-500 text-white px-2 py-1 text-xs rounded-md font-medium shadow-sm;
   }
   
   .badge-new {
-    @apply bg-green-500 text-white px-2 py-1 text-xs rounded-md font-medium;
+    @apply bg-green-500 text-white px-2 py-1 text-xs rounded-md font-medium shadow-sm;
   }
   
   .badge-out-of-stock {
-    @apply bg-gray-500 text-white px-2 py-1 text-xs rounded-md font-medium;
+    @apply bg-gray-500 text-white px-2 py-1 text-xs rounded-md font-medium shadow-sm;
   }
 
   .product-card {
@@ -180,4 +187,29 @@
   .filter-label {
     @apply font-medium text-sm;
   }
+  
+  /* Animation classes */
+  .fade-in {
+    @apply animate-fade-in;
+  }
+  
+  .slide-in {
+    @apply animate-slide-in;
+  }
+  
+  /* Enhance image hover effects */
+  .zoom-effect {
+    @apply transition-transform duration-300 hover:scale-110;
+  }
+  
+  /* Quick View modal styling */
+  .quick-view-trigger {
+    @apply absolute top-2 right-2 bg-white/80 hover:bg-white text-gray-700 p-1.5 rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity;
+  }
+  
+  /* Enhanced badge styling */
+  .badge-pill {
+    @apply rounded-full px-3 py-1 text-xs font-medium;
+  }
 }
+
