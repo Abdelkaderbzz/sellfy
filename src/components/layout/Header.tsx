@@ -11,7 +11,8 @@ import {
   User,
   Menu,
   Search,
-  X
+  X,
+  Trash
 } from "lucide-react";
 import { 
   Sheet, 
