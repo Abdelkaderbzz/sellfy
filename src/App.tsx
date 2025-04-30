@@ -23,7 +23,7 @@ const queryClient = new QueryClient();
 TakiPopups({
   name: 'Adem',
   memberId: '73924',
-  appId: '67ffaeade783d3021f53c288',
+  appId: '681242ba23766be97e61335b',
   lang: 'ar',
   meta_data: {
     age: 18,

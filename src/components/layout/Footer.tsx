@@ -115,7 +115,7 @@ const Footer: React.FC = () => {
           </div>
         </div>
         <div className="mt-10 pt-6 border-t text-center text-sm text-muted-foreground">
-          <p>© {new Date().getFullYear()} ECommercePrime. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} sellfy. All rights reserved.</p>
         </div>
       </div>
     </footer>
