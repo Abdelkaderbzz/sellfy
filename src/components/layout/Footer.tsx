@@ -1,6 +1,7 @@
 
 import React from "react";
 import { Link } from "react-router-dom";
+import logo from './../../../public/logo.png';
 
 const Footer: React.FC = () => {
   return (
@@ -12,7 +13,7 @@ const Footer: React.FC = () => {
               to='/'
               className='inline-block text-xl font-bold text-brand-primary mb-4'
             >
-              <img src='logo.png' alt='Logo' className='h-10 w-auto' />
+              <img src={logo} alt='Logo' className='h-10 w-auto' />
             </Link>
             <p className='text-muted-foreground max-w-xs'>
               Premium shopping experience with the best products, prices, and

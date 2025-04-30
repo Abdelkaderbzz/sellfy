@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import logo from './../../../public/logo.png'
 import { useWishlist } from '@/contexts/WishlistContext';
 import SearchBar from '@/components/search/SearchBar';
 import {
@@ -83,7 +83,7 @@ const Header: React.FC = () => {
         </div>
 
         <div className='flex items-center'>
-          <img src='logo.png' alt='Logo' className='h-10 w-auto' />
+          <img src={logo} alt='Logo' className='h-10 w-auto' />
         </div>
 
         <nav className='mx-6 hidden items-center space-x-4 md:flex md:flex-1'>
