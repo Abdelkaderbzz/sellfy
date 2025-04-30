@@ -13,17 +13,13 @@ import {
 import ProductBadges from "./ProductBadges";
 import ProductRating from "./ProductRating";
 import QuickViewContent from "./QuickViewContent";
-
-interface GridViewCardProps {
-  product: Product;
-  onAddToCart: (e: React.MouseEvent) => void;
-  onAddToWishlist: (e: React.MouseEvent) => void;
-}
+import { GridViewCardProps } from "./ProductCardInterface";
 
 const GridViewCard: React.FC<GridViewCardProps> = ({
   product,
   onAddToCart,
   onAddToWishlist,
+  isInWishlist,
 }) => {
   return (
     <Card className="product-card h-full transition-all duration-300 hover:-translate-y-1">
@@ -61,10 +57,10 @@ const GridViewCard: React.FC<GridViewCardProps> = ({
             <Button
               variant="secondary"
               size="icon"
-              className="h-8 w-8 rounded-full bg-white hover:bg-gray-100 text-gray-800"
+              className={`h-8 w-8 rounded-full bg-white hover:bg-gray-100 ${isInWishlist ? "text-red-500" : "text-gray-800"}`}
               onClick={onAddToWishlist}
             >
-              <Heart className="h-4 w-4" />
+              <Heart className={`h-4 w-4 ${isInWishlist ? "fill-current" : ""}`} />
             </Button>
             
             <Button

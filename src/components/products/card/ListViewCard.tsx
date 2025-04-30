@@ -13,17 +13,13 @@ import {
 import ProductBadges from "./ProductBadges";
 import ProductRating from "./ProductRating";
 import QuickViewContent from "./QuickViewContent";
-
-interface ListViewCardProps {
-  product: Product;
-  onAddToCart: (e: React.MouseEvent) => void;
-  onAddToWishlist: (e: React.MouseEvent) => void;
-}
+import { ListViewCardProps } from "./ProductCardInterface";
 
 const ListViewCard: React.FC<ListViewCardProps> = ({
   product,
   onAddToCart,
   onAddToWishlist,
+  isInWishlist,
 }) => {
   return (
     <Card className="product-card transition-all duration-300 hover:shadow-md">
@@ -93,10 +89,10 @@ const ListViewCard: React.FC<ListViewCardProps> = ({
                 <Button 
                   variant="outline" 
                   size="icon" 
-                  className="h-9 w-9"
+                  className={`h-9 w-9 ${isInWishlist ? "text-red-500 border-red-500" : ""}`}
                   onClick={onAddToWishlist}
                 >
-                  <Heart className="h-5 w-5" />
+                  <Heart className={`h-5 w-5 ${isInWishlist ? "fill-current" : ""}`} />
                 </Button>
                 
                 <Button 
