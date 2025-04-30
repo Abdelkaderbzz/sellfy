@@ -36,19 +36,25 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   
   // Load cart from localStorage on initial render
   useEffect(() => {
-    const storedCart = localStorage.getItem("cart");
-    if (storedCart) {
-      try {
+    try {
+      const storedCart = localStorage.getItem("cart");
+      if (storedCart) {
         setItems(JSON.parse(storedCart));
-      } catch (error) {
-        console.error("Failed to parse cart from localStorage", error);
       }
+    } catch (error) {
+      console.error("Failed to parse cart from localStorage", error);
+      // In case of error, reset the cart
+      localStorage.removeItem("cart");
     }
   }, []);
   
   // Save cart to localStorage whenever it changes
   useEffect(() => {
-    localStorage.setItem("cart", JSON.stringify(items));
+    try {
+      localStorage.setItem("cart", JSON.stringify(items));
+    } catch (error) {
+      console.error("Failed to save cart to localStorage", error);
+    }
   }, [items]);
   
   const findItemIndex = (productId: number, variantId?: number) => {
@@ -58,6 +64,8 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   };
   
   const addItem = (product: Product, quantity: number, variant?: ProductVariant) => {
+    if (quantity <= 0) return;
+    
     setItems((prevItems) => {
       const existingIndex = findItemIndex(product.id, variant?.id);
       
@@ -122,6 +130,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     toast.success("Cart cleared");
   };
   
+  // Calculate item count correctly by summing all quantities
   const itemCount = items.reduce((total, item) => total + item.quantity, 0);
   
   const subtotal = items.reduce((total, item) => {
@@ -129,21 +138,17 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     return total + price * item.quantity;
   }, 0);
   
-  return (
-    <CartContext.Provider
-      value={{
-        items,
-        addItem,
-        removeItem,
-        updateQuantity,
-        clearCart,
-        itemCount,
-        subtotal,
-      }}
-    >
-      {children}
-    </CartContext.Provider>
-  );
+  const value = {
+    items,
+    addItem,
+    removeItem,
+    updateQuantity,
+    clearCart,
+    itemCount,
+    subtotal
+  };
+  
+  return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 };
 
 export default CartContext;

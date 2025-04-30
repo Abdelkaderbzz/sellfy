@@ -1,22 +1,34 @@
 
 import React from "react";
 import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 
 interface ProductBadgesProps {
   isNew?: boolean;
   onSale?: boolean;
   salePercentage?: number;
   stock: number;
+  className?: string;
+  position?: "top-left" | "top-right" | "bottom-left" | "bottom-right";
 }
 
 const ProductBadges: React.FC<ProductBadgesProps> = ({ 
   isNew, 
   onSale, 
   salePercentage, 
-  stock 
+  stock,
+  className,
+  position = "top-left"
 }) => {
+  const positionClasses = {
+    "top-left": "top-2 left-2",
+    "top-right": "top-2 right-2",
+    "bottom-left": "bottom-2 left-2",
+    "bottom-right": "bottom-2 right-2"
+  };
+
   return (
-    <div className="absolute top-2 left-2 flex flex-col gap-1">
+    <div className={cn("absolute flex flex-col gap-1", positionClasses[position], className)}>
       {onSale && salePercentage && (
         <Badge variant="destructive" className="text-xs font-semibold">
           {salePercentage}% OFF
