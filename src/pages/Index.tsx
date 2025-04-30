@@ -227,7 +227,7 @@ const Index = () => {
       />
 
       {/* Features Section */}
-      <section className='py-12 bg-brand-light'>
+      <section className='py-12' style={{ backgroundColor: '#6bde89' }}>
         <div className='container mx-auto px-4'>
           <div className='grid grid-cols-1 md:grid-cols-3 gap-8'>
             <div className='flex flex-col items-center text-center'>
