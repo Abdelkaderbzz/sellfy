@@ -10,6 +10,41 @@ import {
 } from "lucide-react";
 import ProductCard from "@/components/products/ProductCard";
 import { products } from "@/data/mockData";
+import BrandSection from "@/components/brands/BrandSection";
+
+// Sample brand data 
+const brands = [
+  {
+    name: "AudioTech",
+    logo: "https://placehold.co/200x80?text=AudioTech",
+    slug: "audiotech",
+    productCount: 42
+  },
+  {
+    name: "VisionTech",
+    logo: "https://placehold.co/200x80?text=VisionTech",
+    slug: "visiontech",
+    productCount: 36
+  },
+  {
+    name: "TechGiant",
+    logo: "https://placehold.co/200x80?text=TechGiant",
+    slug: "techgiant",
+    productCount: 51
+  },
+  {
+    name: "SmartLife",
+    logo: "https://placehold.co/200x80?text=SmartLife",
+    slug: "smartlife",
+    productCount: 29
+  },
+  {
+    name: "ComputeTech",
+    logo: "https://placehold.co/200x80?text=ComputeTech",
+    slug: "computetech",
+    productCount: 45
+  }
+];
 
 const Index = () => {
   const featuredProducts = products.filter(product => product.isFeatured).slice(0, 4);
@@ -147,29 +182,12 @@ const Index = () => {
         </div>
       </section>
       
-      {/* Brands Section */}
-      <section className="py-12 bg-background">
-        <div className="container mx-auto px-4">
-          <h2 className="text-2xl md:text-3xl font-bold mb-8 text-center">Shop by Brand</h2>
-          <div className="flex flex-wrap justify-center items-center gap-8 md:gap-12">
-            <div className="bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow">
-              <img src="https://placehold.co/200x80?text=AudioTech" alt="AudioTech" className="h-12" />
-            </div>
-            <div className="bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow">
-              <img src="https://placehold.co/200x80?text=VisionTech" alt="VisionTech" className="h-12" />
-            </div>
-            <div className="bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow">
-              <img src="https://placehold.co/200x80?text=TechGiant" alt="TechGiant" className="h-12" />
-            </div>
-            <div className="bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow">
-              <img src="https://placehold.co/200x80?text=SmartLife" alt="SmartLife" className="h-12" />
-            </div>
-            <div className="bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow">
-              <img src="https://placehold.co/200x80?text=ComputeTech" alt="ComputeTech" className="h-12" />
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* Brands Section - replaced with our new component */}
+      <BrandSection 
+        brands={brands}
+        title="Shop by Brand"
+        description="Discover products from top brands in the electronics industry"
+      />
 
       {/* Features Section */}
       <section className="py-12 bg-brand-light">
@@ -206,7 +224,7 @@ const Index = () => {
           <h2 className="text-2xl md:text-3xl font-bold mb-4">Stay Updated</h2>
           <p className="text-gray-600 mb-6">Subscribe to our newsletter for exclusive deals and updates on new products.</p>
           <form className="flex flex-col sm:flex-row gap-3 max-w-lg mx-auto">
-            <input 
+            <Input 
               type="email" 
               placeholder="Enter your email"
               className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"

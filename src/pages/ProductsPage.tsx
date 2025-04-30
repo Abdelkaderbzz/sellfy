@@ -5,6 +5,7 @@ import Layout from "@/components/layout/Layout";
 import ProductCard from "@/components/products/ProductCard";
 import ProductFilter from "@/components/products/ProductFilter";
 import ProductSort from "@/components/products/ProductSort";
+import SearchBar from "@/components/search/SearchBar";
 import { products } from "@/data/mockData";
 import { Product, FilterState, SortOption } from "@/types";
 import {
@@ -38,6 +39,7 @@ const ProductsPage = () => {
   const [filteredProducts, setFilteredProducts] = useState<Product[]>(products);
   const [filters, setFilters] = useState<FilterState>(defaultFilters);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
   // Initialize filters from URL params
   useEffect(() => {
@@ -50,6 +52,7 @@ const ProductsPage = () => {
     const urlMinRating = searchParams.get("minRating");
     const urlSortBy = searchParams.get("sortBy") as SortOption || "relevance";
     const urlView = (searchParams.get("view") as "grid" | "list") || "grid";
+    const urlSearch = searchParams.get("search") || "";
     
     setFilters({
       ...defaultFilters,
@@ -63,20 +66,32 @@ const ProductsPage = () => {
       sortBy: urlSortBy,
       view: urlView,
     });
+
+    setSearchQuery(urlSearch);
   }, [searchParams]);
 
   // Apply filters and sorting
   useEffect(() => {
     let result = [...products];
     
+    // Filter by search query
+    if (searchQuery) {
+      result = result.filter(product => 
+        product.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+        product.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        product.brand.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        product.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()))
+      );
+    }
+    
     // Filter by category
     if (filters.category) {
-      result = result.filter(product => product.category === filters.category);
+      result = result.filter(product => product.category.toLowerCase() === filters.category?.toLowerCase());
     }
     
     // Filter by subcategory
     if (filters.subcategory) {
-      result = result.filter(product => product.subcategory === filters.subcategory);
+      result = result.filter(product => product.subcategory?.toLowerCase() === filters.subcategory?.toLowerCase());
     }
     
     // Filter by price
@@ -131,6 +146,7 @@ const ProductsPage = () => {
     // Update URL parameters
     const params = new URLSearchParams();
     
+    if (searchQuery) params.set("search", searchQuery);
     if (filters.category) params.set("category", filters.category);
     if (filters.subcategory) params.set("subcategory", filters.subcategory);
     if (filters.minPrice !== null) params.set("minPrice", filters.minPrice.toString());
@@ -142,7 +158,7 @@ const ProductsPage = () => {
     if (filters.view !== "grid") params.set("view", filters.view);
     
     setSearchParams(params);
-  }, [filters, setSearchParams]);
+  }, [filters, searchQuery, setSearchParams]);
 
   const handleFilterChange = (newFilters: FilterState) => {
     setFilters(newFilters);
@@ -168,6 +184,7 @@ const ProductsPage = () => {
       sortBy: filters.sortBy,
       view: filters.view,
     });
+    setSearchQuery("");
   };
 
   const getFilteredCount = () => {
@@ -178,7 +195,8 @@ const ProductsPage = () => {
       filters.maxPrice !== null ||
       filters.brands.length > 0 ||
       filters.inStock ||
-      filters.minRating !== null;
+      filters.minRating !== null ||
+      searchQuery !== "";
       
     return hasActiveFilters;
   };
@@ -186,7 +204,15 @@ const ProductsPage = () => {
   return (
     <Layout>
       <div className="container py-8">
-        <h1 className="text-3xl font-bold mb-6">Products</h1>
+        <h1 className="text-3xl font-bold mb-4">Products</h1>
+        
+        {/* Search Bar */}
+        <div className="mb-6">
+          <SearchBar 
+            className="max-w-xl" 
+            isExpanded={true} 
+          />
+        </div>
         
         <div className="flex flex-col md:flex-row gap-8">
           {/* Filters for Desktop */}
