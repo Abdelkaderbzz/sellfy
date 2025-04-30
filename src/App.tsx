@@ -11,6 +11,8 @@ import ProductDetailPage from "./pages/ProductDetailPage";
 import CartPage from "./pages/CartPage";
 import CheckoutPage from "./pages/CheckoutPage";
 import ProfilePage from "./pages/ProfilePage";
+import CategoriesPage from "./pages/CategoriesPage";
+import AboutUsPage from "./pages/AboutUsPage";
 import NotFound from "./pages/NotFound";
 import { CartProvider } from "./contexts/CartContext";
 
@@ -32,6 +34,8 @@ const App = () => {
                 <Route path="/cart" element={<CartPage />} />
                 <Route path="/checkout" element={<CheckoutPage />} />
                 <Route path="/profile" element={<ProfilePage />} />
+                <Route path="/categories" element={<CategoriesPage />} />
+                <Route path="/about" element={<AboutUsPage />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>
