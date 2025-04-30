@@ -6,6 +6,7 @@ import { useCart } from "@/contexts/CartContext";
 import { useWishlist } from "@/contexts/WishlistContext";
 import GridViewCard from "./card/GridViewCard";
 import ListViewCard from "./card/ListViewCard";
+import { GridViewCardProps, ListViewCardProps } from "./card/ProductCardInterface";
 
 interface ProductCardProps {
   product: Product;
