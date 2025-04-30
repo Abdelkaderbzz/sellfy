@@ -3,14 +3,15 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useWishlist } from "@/contexts/WishlistContext";
+import SearchBar from "@/components/search/SearchBar";
 import {
   ShoppingCart,
   Heart,
   User,
   Menu,
   Search,
-  X,
-  Trash,
+  X
 } from "lucide-react";
 import { 
   Sheet, 
@@ -28,6 +29,7 @@ import { Badge } from "@/components/ui/badge";
 const Header: React.FC = () => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const { items, removeItem, itemCount, subtotal } = useCart();
+  const { wishlist } = useWishlist();
 
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background">
@@ -90,15 +92,10 @@ const Header: React.FC = () => {
         <div className="flex flex-1 items-center justify-end space-x-2">
           {isSearchOpen ? (
             <div className="flex items-center w-full max-w-xs md:max-w-md animate-fade-in">
-              <Input
-                type="search"
-                placeholder="Search products..."
-                className="rounded-r-none"
-                autoFocus
+              <SearchBar 
+                isExpanded={true} 
+                onClose={() => setIsSearchOpen(false)} 
               />
-              <Button className="rounded-l-none" variant="ghost" onClick={() => setIsSearchOpen(false)}>
-                <X className="h-5 w-5" />
-              </Button>
             </div>
           ) : (
             <Button
@@ -112,9 +109,14 @@ const Header: React.FC = () => {
             </Button>
           )}
 
-          <Button variant="ghost" size="icon" aria-label="Wishlist" asChild>
+          <Button variant="ghost" size="icon" aria-label="Wishlist" asChild className="relative">
             <Link to="/wishlist">
               <Heart className="h-5 w-5" />
+              {wishlist.length > 0 && (
+                <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-medium text-primary-foreground">
+                  {wishlist.length}
+                </span>
+              )}
             </Link>
           </Button>
 
@@ -126,7 +128,7 @@ const Header: React.FC = () => {
 
           <Sheet>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" aria-label="Cart">
+              <Button variant="ghost" size="icon" aria-label="Cart" className="relative">
                 <ShoppingCart className="h-5 w-5" />
                 {itemCount > 0 && (
                   <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-medium text-primary-foreground">

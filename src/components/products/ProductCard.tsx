@@ -3,6 +3,7 @@ import React from "react";
 import { Product } from "@/types";
 import { toast } from "sonner";
 import { useCart } from "@/contexts/CartContext";
+import { useWishlist } from "@/contexts/WishlistContext";
 import GridViewCard from "./card/GridViewCard";
 import ListViewCard from "./card/ListViewCard";
 
@@ -16,6 +17,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
   isGridView = true 
 }) => {
   const { addItem } = useCart();
+  const { isInWishlist, toggleWishlist } = useWishlist();
   
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -26,7 +28,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
   const handleAddToWishlist = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    toast.success(`${product.name} added to wishlist!`);
+    toggleWishlist(product.id, product.name);
   };
 
   if (isGridView) {
@@ -35,6 +37,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
         product={product} 
         onAddToCart={handleAddToCart}
         onAddToWishlist={handleAddToWishlist}
+        isInWishlist={isInWishlist(product.id)}
       />
     );
   } else {
@@ -44,6 +47,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
         product={product} 
         onAddToCart={handleAddToCart}
         onAddToWishlist={handleAddToWishlist}
+        isInWishlist={isInWishlist(product.id)}
       />
     );
   }
