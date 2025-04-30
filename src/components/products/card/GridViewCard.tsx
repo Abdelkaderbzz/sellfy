@@ -91,12 +91,38 @@ const GridViewCard: React.FC<GridViewCardProps> = ({
           />
           <div className="mt-2 flex items-center">
             {product.originalPrice && (
-              <span className="price-original">${product.originalPrice.toFixed(2)}</span>
+              <span className="price-original text-sm text-muted-foreground line-through mr-2">${product.originalPrice.toFixed(2)}</span>
             )}
-            <span className={product.onSale ? "price price-discount" : "price"}>
+            <span className={product.onSale ? "price price-discount font-medium" : "price font-medium"}>
               ${product.price.toFixed(2)}
             </span>
+            {product.onSale && (
+              <span className="ml-2 text-xs px-1.5 py-0.5 bg-red-100 text-red-600 rounded">
+                Save {product.salePercentage}%
+              </span>
+            )}
           </div>
+          
+          {product.stock < 10 && product.stock > 0 && (
+            <div className="mt-2 text-xs text-amber-600">
+              Only {product.stock} left in stock
+            </div>
+          )}
+          {product.stock === 0 && (
+            <div className="mt-2 text-xs text-red-600">
+              Out of stock
+            </div>
+          )}
+          
+          {product.tags && product.tags.length > 0 && (
+            <div className="mt-2 flex flex-wrap gap-1">
+              {product.tags.slice(0, 2).map((tag, index) => (
+                <span key={index} className="text-xs px-1.5 py-0.5 bg-gray-100 text-gray-600 rounded">
+                  {tag}
+                </span>
+              ))}
+            </div>
+          )}
         </CardContent>
       </Link>
     </Card>
