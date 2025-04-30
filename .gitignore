@@ -6,14 +6,17 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
-
-node_modules
+/node_modules
+package-lock.json
+/package-lock.json
+cypress.config.ts
 dist
+.env
 dist-ssr
 *.local
-
+coverage
 # Editor directories and files
-.vscode/*
+#.vscode/*
 !.vscode/extensions.json
 .idea
 .DS_Store
@@ -21,4 +24,14 @@ dist-ssr
 *.ntvs*
 *.njsproj
 *.sln
+cypress.config.ts
 *.sw?
+
+Comp
+Counter
+
+dist
+
+file.json
+# Sentry Config File
+.env.sentry-build-plugin
