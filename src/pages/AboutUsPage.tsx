@@ -119,7 +119,7 @@ const AboutUsPage: React.FC = () => {
                       </div>
                       <div>
                         <h4 className="font-medium">Email Us</h4>
-                        <p className="text-sm text-muted-foreground">support@ecommerceprime.com</p>
+                        <p className="text-sm text-muted-foreground">support@sellfy.com</p>
                       </div>
                     </div>
                     <div className="flex items-start">

@@ -591,7 +591,7 @@ const CheckoutPage = () => {
               <div className="mt-6 text-xs text-muted-foreground">
                 <p className="mb-1">Need help? Contact our support team.</p>
                 <p>
-                  <span className="font-medium">Email:</span> support@ecommerceprime.com
+                  <span className="font-medium">Email:</span> support@sellfy.com
                 </p>
                 <p>
                   <span className="font-medium">Phone:</span> +1 (800) 123-4567
