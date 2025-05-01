@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
@@ -11,6 +10,7 @@ import { fetchFeaturedProducts, fetchNewProducts, fetchSaleProducts } from '@/se
 import { Product } from '@/types';
 import { toast } from 'sonner';
 import DatabaseSeeder from '@/components/admin/DatabaseSeeder';
+import { hasValidSupabaseCredentials } from '@/lib/supabase';
 
 // Sample brand data
 const brands = [
@@ -51,7 +51,7 @@ const Index = () => {
   const [newArrivals, setNewArrivals] = useState<Product[]>([]);
   const [onSaleProducts, setOnSaleProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [isSupabaseConnected, setIsSupabaseConnected] = useState(false);
+  const [isSupabaseConnected, setIsSupabaseConnected] = useState(hasValidSupabaseCredentials());
 
   useEffect(() => {
     async function loadProducts() {
@@ -59,31 +59,23 @@ const Index = () => {
         setIsLoading(true);
         
         // Try to fetch products from Supabase to check if it's connected
-        try {
-          const featured = await fetchFeaturedProducts();
-          setFeaturedProducts(featured.slice(0, 4));
-          setIsSupabaseConnected(true);
-          
-          const newProducts = await fetchNewProducts();
-          setNewArrivals(newProducts.slice(0, 4));
-          
-          const saleProducts = await fetchSaleProducts();
-          setOnSaleProducts(saleProducts.slice(0, 4));
-        } catch (error) {
-          console.error("Could not load from Supabase:", error);
-          // If Supabase fails, fall back to mock data
-          setIsSupabaseConnected(false);
-          
-          // Import mock data if Supabase fails
-          const { products } = await import('@/data/mockData');
-          
-          setFeaturedProducts(products.filter(p => p.isFeatured).slice(0, 4));
-          setNewArrivals(products.filter(p => p.isNew).slice(0, 4));
-          setOnSaleProducts(products.filter(p => p.onSale).slice(0, 4));
-          
-          toast.error("Failed to connect to Supabase. Using local data instead.", {
-            duration: 5000,
-          });
+        if (isSupabaseConnected) {
+          try {
+            const featured = await fetchFeaturedProducts();
+            setFeaturedProducts(featured.slice(0, 4));
+            
+            const newProducts = await fetchNewProducts();
+            setNewArrivals(newProducts.slice(0, 4));
+            
+            const saleProducts = await fetchSaleProducts();
+            setOnSaleProducts(saleProducts.slice(0, 4));
+          } catch (error) {
+            console.error("Could not load from Supabase:", error);
+            setIsSupabaseConnected(false);
+            loadMockData();
+          }
+        } else {
+          loadMockData();
         }
       } catch (error) {
         console.error("Error loading products:", error);
@@ -93,8 +85,23 @@ const Index = () => {
       }
     }
     
+    async function loadMockData() {
+      // If Supabase fails, fall back to mock data
+      const { products } = await import('@/data/mockData');
+      
+      setFeaturedProducts(products.filter(p => p.isFeatured).slice(0, 4));
+      setNewArrivals(products.filter(p => p.isNew).slice(0, 4));
+      setOnSaleProducts(products.filter(p => p.onSale).slice(0, 4));
+      
+      if (hasValidSupabaseCredentials()) {
+        toast.error("Failed to connect to Supabase. Using local data instead.", {
+          duration: 5000,
+        });
+      }
+    }
+    
     loadProducts();
-  }, []);
+  }, [isSupabaseConnected]);
 
   return (
     <Layout>
@@ -104,19 +111,16 @@ const Index = () => {
           <div className="p-4 bg-amber-50 border border-amber-200 rounded-lg mb-4">
             <h2 className="font-semibold text-amber-800">Supabase Connection Required</h2>
             <p className="text-amber-700 text-sm mt-1">
-              Please connect to Supabase using the green button in the top right corner
-              to enable database functionality.
+              Please set your Supabase URL and anon key in the .env file to enable database functionality.
             </p>
           </div>
         </div>
       )}
       
       {/* Database Seeder - Only show if connected to Supabase */}
-      {isSupabaseConnected && (
-        <div className="container mt-4">
-          <DatabaseSeeder />
-        </div>
-      )}
+      <div className="container mt-4">
+        <DatabaseSeeder />
+      </div>
       
       {/* Hero Section */}
       <section className='relative bg-gradient-to-r from-[#0CB657] via-[#0cb656a8] to-white py-16 md:py-24'>
