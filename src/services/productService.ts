@@ -1,9 +1,12 @@
+import { supabase } from '@/lib/supabase';
+import { Product, ProductVariant } from '@/types';
 
-import { supabase } from "@/lib/supabase";
-import { Product, ProductVariant } from "@/types";
-
-// Transform the data from Supabase format to our app's format
-function transformProduct(dbProduct: any, images: any[] = [], variants: any[] = []): Product {
+// Transform function
+function transformProduct(
+  dbProduct: any,
+  images: any[] = [],
+  variants: any[] = []
+): Product {
   return {
     id: dbProduct.id,
     name: dbProduct.name,
@@ -12,16 +15,19 @@ function transformProduct(dbProduct: any, images: any[] = [], variants: any[] = 
     originalPrice: dbProduct.original_price || undefined,
     category: dbProduct.category,
     subcategory: dbProduct.subcategory || undefined,
-    images: images.map(img => img.image_url),
-    variants: variants.map(v => ({
-      id: v.id,
-      name: v.name,
-      color: v.color || undefined,
-      size: v.size || undefined,
-      stock: v.stock,
-      price: v.price,
-    } as ProductVariant)),
-    tags: [], // We'll need to implement tags separately
+    images: images.map((img) => img.image_url),
+    variants: variants.map(
+      (v) =>
+        ({
+          id: v.id,
+          name: v.name,
+          color: v.color || undefined,
+          size: v.size || undefined,
+          stock: v.stock,
+          price: v.price,
+        } as ProductVariant)
+    ),
+    tags: [], // Placeholder for tags
     rating: dbProduct.rating,
     reviewCount: dbProduct.review_count,
     stock: dbProduct.stock,
@@ -34,150 +40,74 @@ function transformProduct(dbProduct: any, images: any[] = [], variants: any[] = 
   };
 }
 
-// Fetch all products
-export async function fetchProducts(): Promise<Product[]> {
+// Generalized bulk fetch function
+async function fetchProductsByFilter(
+  filter: Partial<Record<keyof Product, any>> = {}
+): Promise<Product[]> {
   try {
     const { data: productsData, error: productsError } = await supabase
       .from('products')
-      .select('*');
+      .select('*')
+      .match(filter);
 
     if (productsError) throw productsError;
-    
-    const products: Product[] = [];
-    
-    for (const dbProduct of productsData) {
-      // Get images for this product
-      const { data: imagesData } = await supabase
+    if (!productsData || productsData.length === 0) return [];
+
+    const productIds = productsData.map((p) => p.id);
+
+    const [
+      { data: imagesData, error: imagesError },
+      { data: variantsData, error: variantsError },
+    ] = await Promise.all([
+      supabase
         .from('product_images')
         .select('*')
-        .eq('product_id', dbProduct.id)
-        .order('display_order');
-      
-      // Get variants for this product
-      const { data: variantsData } = await supabase
+        .in('product_id', productIds)
+        .order('display_order'),
+      supabase
         .from('product_variants')
         .select('*')
-        .eq('product_id', dbProduct.id);
-      
-      products.push(transformProduct(dbProduct, imagesData || [], variantsData || []));
+        .in('product_id', productIds),
+    ]);
+
+    if (imagesError) throw imagesError;
+    if (variantsError) throw variantsError;
+
+    const imagesByProduct = new Map<number, any[]>();
+    for (const image of imagesData || []) {
+      const arr = imagesByProduct.get(image.product_id) || [];
+      arr.push(image);
+      imagesByProduct.set(image.product_id, arr);
     }
-    
-    return products;
+
+    const variantsByProduct = new Map<number, any[]>();
+    for (const variant of variantsData || []) {
+      const arr = variantsByProduct.get(variant.product_id) || [];
+      arr.push(variant);
+      variantsByProduct.set(variant.product_id, arr);
+    }
+
+    return productsData.map((p) =>
+      transformProduct(
+        p,
+        imagesByProduct.get(p.id) || [],
+        variantsByProduct.get(p.id) || []
+      )
+    );
   } catch (error) {
-    console.error("Error fetching products:", error);
+    console.error('Error fetching products:', error);
     throw error;
   }
 }
 
-// Fetch featured products
-export async function fetchFeaturedProducts(): Promise<Product[]> {
-  try {
-    const { data, error } = await supabase
-      .from('products')
-      .select('*')
-      .eq('is_featured', true);
-    
-    if (error) throw error;
-    
-    const products: Product[] = [];
-    
-    for (const dbProduct of data) {
-      // Get images for this product
-      const { data: imagesData } = await supabase
-        .from('product_images')
-        .select('*')
-        .eq('product_id', dbProduct.id)
-        .order('display_order');
-      
-      // Get variants for this product
-      const { data: variantsData } = await supabase
-        .from('product_variants')
-        .select('*')
-        .eq('product_id', dbProduct.id);
-      
-      products.push(transformProduct(dbProduct, imagesData || [], variantsData || []));
-    }
-    
-    return products;
-  } catch (error) {
-    console.error("Error fetching featured products:", error);
-    throw error;
-  }
-}
+// Specific product fetchers using the optimized function
+export const fetchProducts = () => fetchProductsByFilter();
+export const fetchFeaturedProducts = () =>
+  fetchProductsByFilter({ is_featured: true });
+export const fetchNewProducts = () => fetchProductsByFilter({ is_new: true });
+export const fetchSaleProducts = () => fetchProductsByFilter({ on_sale: true });
 
-// Fetch new arrival products
-export async function fetchNewProducts(): Promise<Product[]> {
-  try {
-    const { data, error } = await supabase
-      .from('products')
-      .select('*')
-      .eq('is_new', true);
-    
-    if (error) throw error;
-    
-    const products: Product[] = [];
-    
-    for (const dbProduct of data) {
-      // Get images for this product
-      const { data: imagesData } = await supabase
-        .from('product_images')
-        .select('*')
-        .eq('product_id', dbProduct.id)
-        .order('display_order');
-      
-      // Get variants for this product
-      const { data: variantsData } = await supabase
-        .from('product_variants')
-        .select('*')
-        .eq('product_id', dbProduct.id);
-      
-      products.push(transformProduct(dbProduct, imagesData || [], variantsData || []));
-    }
-    
-    return products;
-  } catch (error) {
-    console.error("Error fetching new products:", error);
-    throw error;
-  }
-}
-
-// Fetch on sale products
-export async function fetchSaleProducts(): Promise<Product[]> {
-  try {
-    const { data, error } = await supabase
-      .from('products')
-      .select('*')
-      .eq('on_sale', true);
-    
-    if (error) throw error;
-    
-    const products: Product[] = [];
-    
-    for (const dbProduct of data) {
-      // Get images for this product
-      const { data: imagesData } = await supabase
-        .from('product_images')
-        .select('*')
-        .eq('product_id', dbProduct.id)
-        .order('display_order');
-      
-      // Get variants for this product
-      const { data: variantsData } = await supabase
-        .from('product_variants')
-        .select('*')
-        .eq('product_id', dbProduct.id);
-      
-      products.push(transformProduct(dbProduct, imagesData || [], variantsData || []));
-    }
-    
-    return products;
-  } catch (error) {
-    console.error("Error fetching sale products:", error);
-    throw error;
-  }
-}
-
-// Fetch a single product by ID
+// Fetch a single product by ID (no bulk optimization needed)
 export async function fetchProductById(id: number): Promise<Product | null> {
   try {
     const { data: dbProduct, error } = await supabase
@@ -185,23 +115,22 @@ export async function fetchProductById(id: number): Promise<Product | null> {
       .select('*')
       .eq('id', id)
       .single();
-    
+
     if (error) throw error;
     if (!dbProduct) return null;
-    
-    // Get images for this product
-    const { data: imagesData } = await supabase
-      .from('product_images')
-      .select('*')
-      .eq('product_id', dbProduct.id)
-      .order('display_order');
-    
-    // Get variants for this product
-    const { data: variantsData } = await supabase
-      .from('product_variants')
-      .select('*')
-      .eq('product_id', dbProduct.id);
-    
+
+    const [{ data: imagesData }, { data: variantsData }] = await Promise.all([
+      supabase
+        .from('product_images')
+        .select('*')
+        .eq('product_id', dbProduct.id)
+        .order('display_order'),
+      supabase
+        .from('product_variants')
+        .select('*')
+        .eq('product_id', dbProduct.id),
+    ]);
+
     return transformProduct(dbProduct, imagesData || [], variantsData || []);
   } catch (error) {
     console.error(`Error fetching product with ID ${id}:`, error);
