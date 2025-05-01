@@ -6,7 +6,7 @@ import ProductCard from "@/components/products/ProductCard";
 import ProductFilter from "@/components/products/ProductFilter";
 import ProductSort from "@/components/products/ProductSort";
 import SearchBar from "@/components/search/SearchBar";
-import { products } from "@/data/mockData";
+import { fetchProducts } from "@/services/productService";
 import { Product, FilterState, SortOption } from "@/types";
 import {
   Sheet,
@@ -18,6 +18,7 @@ import {
   FilterIcon,
   X
 } from "lucide-react";
+import { toast } from "sonner";
 
 const defaultFilters: FilterState = {
   category: null,
@@ -36,10 +37,36 @@ const defaultFilters: FilterState = {
 
 const ProductsPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [filteredProducts, setFilteredProducts] = useState<Product[]>(products);
+  const [allProducts, setAllProducts] = useState<Product[]>([]);
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [filters, setFilters] = useState<FilterState>(defaultFilters);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Load all products from Supabase or fallback to mock data
+  useEffect(() => {
+    async function loadProducts() {
+      setIsLoading(true);
+      try {
+        // Try to fetch from Supabase
+        const products = await fetchProducts();
+        setAllProducts(products);
+      } catch (error) {
+        console.error("Failed to fetch from Supabase:", error);
+        
+        // Fall back to mock data
+        const { products: mockProducts } = await import('@/data/mockData');
+        setAllProducts(mockProducts);
+        
+        toast.error("Failed to fetch products from database. Using local data instead.");
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    
+    loadProducts();
+  }, []);
 
   // Initialize filters from URL params
   useEffect(() => {
@@ -72,7 +99,9 @@ const ProductsPage = () => {
 
   // Apply filters and sorting
   useEffect(() => {
-    let result = [...products];
+    if (allProducts.length === 0) return;
+    
+    let result = [...allProducts];
     
     // Filter by search query
     if (searchQuery) {
@@ -158,7 +187,7 @@ const ProductsPage = () => {
     if (filters.view !== "grid") params.set("view", filters.view);
     
     setSearchParams(params);
-  }, [filters, searchQuery, setSearchParams]);
+  }, [filters, searchQuery, allProducts, setSearchParams]);
 
   const handleFilterChange = (newFilters: FilterState) => {
     setFilters(newFilters);
@@ -271,7 +300,18 @@ const ProductsPage = () => {
               />
             </div>
             
-            {filteredProducts.length === 0 ? (
+            {isLoading ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+                  <div key={i} className="bg-white rounded-lg shadow-md p-4 animate-pulse">
+                    <div className="w-full h-48 bg-gray-200 rounded-md mb-4"></div>
+                    <div className="h-6 bg-gray-200 rounded mb-2 w-3/4"></div>
+                    <div className="h-4 bg-gray-200 rounded mb-4 w-1/2"></div>
+                    <div className="h-10 bg-gray-200 rounded"></div>
+                  </div>
+                ))}
+              </div>
+            ) : filteredProducts.length === 0 ? (
               <div className="text-center py-12">
                 <h2 className="text-xl font-medium mb-2">No products found</h2>
                 <p className="text-muted-foreground mb-4">Try adjusting your filter criteria or browse our popular collections.</p>
