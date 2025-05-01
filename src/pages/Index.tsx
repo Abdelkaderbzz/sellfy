@@ -1,12 +1,16 @@
-import React from 'react';
+
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ArrowRight, ShoppingCart, Star } from 'lucide-react';
 import ProductCard from '@/components/products/ProductCard';
-import { products } from '@/data/mockData';
 import BrandSection from '@/components/brands/BrandSection';
+import { fetchFeaturedProducts, fetchNewProducts, fetchSaleProducts } from '@/services/productService';
+import { Product } from '@/types';
+import { toast } from 'sonner';
+import DatabaseSeeder from '@/components/admin/DatabaseSeeder';
 
 // Sample brand data
 const brands = [
@@ -43,16 +47,77 @@ const brands = [
 ];
 
 const Index = () => {
-  const featuredProducts = products
-    .filter((product) => product.isFeatured)
-    .slice(0, 4);
-  const newArrivals = products.filter((product) => product.isNew).slice(0, 4);
-  const onSaleProducts = products
-    .filter((product) => product.onSale)
-    .slice(0, 4);
+  const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
+  const [newArrivals, setNewArrivals] = useState<Product[]>([]);
+  const [onSaleProducts, setOnSaleProducts] = useState<Product[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSupabaseConnected, setIsSupabaseConnected] = useState(false);
+
+  useEffect(() => {
+    async function loadProducts() {
+      try {
+        setIsLoading(true);
+        
+        // Try to fetch products from Supabase to check if it's connected
+        try {
+          const featured = await fetchFeaturedProducts();
+          setFeaturedProducts(featured.slice(0, 4));
+          setIsSupabaseConnected(true);
+          
+          const newProducts = await fetchNewProducts();
+          setNewArrivals(newProducts.slice(0, 4));
+          
+          const saleProducts = await fetchSaleProducts();
+          setOnSaleProducts(saleProducts.slice(0, 4));
+        } catch (error) {
+          console.error("Could not load from Supabase:", error);
+          // If Supabase fails, fall back to mock data
+          setIsSupabaseConnected(false);
+          
+          // Import mock data if Supabase fails
+          const { products } = await import('@/data/mockData');
+          
+          setFeaturedProducts(products.filter(p => p.isFeatured).slice(0, 4));
+          setNewArrivals(products.filter(p => p.isNew).slice(0, 4));
+          setOnSaleProducts(products.filter(p => p.onSale).slice(0, 4));
+          
+          toast.error("Failed to connect to Supabase. Using local data instead.", {
+            duration: 5000,
+          });
+        }
+      } catch (error) {
+        console.error("Error loading products:", error);
+        toast.error("An error occurred while loading products.");
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    
+    loadProducts();
+  }, []);
 
   return (
     <Layout>
+      {/* Admin Panel - Only show if not connected to Supabase */}
+      {!isSupabaseConnected && (
+        <div className="container mt-4">
+          <div className="p-4 bg-amber-50 border border-amber-200 rounded-lg mb-4">
+            <h2 className="font-semibold text-amber-800">Supabase Connection Required</h2>
+            <p className="text-amber-700 text-sm mt-1">
+              Please connect to Supabase using the green button in the top right corner
+              to enable database functionality.
+            </p>
+          </div>
+        </div>
+      )}
+      
+      {/* Database Seeder - Only show if connected to Supabase */}
+      {isSupabaseConnected && (
+        <div className="container mt-4">
+          <DatabaseSeeder />
+        </div>
+      )}
+      
       {/* Hero Section */}
       <section className='relative bg-gradient-to-r from-[#0CB657] via-[#0cb656a8] to-white py-16 md:py-24'>
         <div className='container relative z-10 mx-auto px-4 flex flex-col md:flex-row items-center'>
@@ -171,11 +236,24 @@ const Index = () => {
               View All <ArrowRight className='ml-1 h-4 w-4' />
             </Link>
           </div>
-          <div className='product-grid'>
-            {featuredProducts.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
+          {isLoading ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              {[1, 2, 3, 4].map((i) => (
+                <div key={i} className="bg-white rounded-lg shadow-md p-4 animate-pulse">
+                  <div className="w-full h-48 bg-gray-200 rounded-md mb-4"></div>
+                  <div className="h-6 bg-gray-200 rounded mb-2 w-3/4"></div>
+                  <div className="h-4 bg-gray-200 rounded mb-4 w-1/2"></div>
+                  <div className="h-10 bg-gray-200 rounded"></div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className='product-grid'>
+              {featuredProducts.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
@@ -191,11 +269,24 @@ const Index = () => {
               View All <ArrowRight className='ml-1 h-4 w-4' />
             </Link>
           </div>
-          <div className='product-grid'>
-            {newArrivals.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
+          {isLoading ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              {[1, 2, 3, 4].map((i) => (
+                <div key={i} className="bg-white rounded-lg shadow-md p-4 animate-pulse">
+                  <div className="w-full h-48 bg-gray-200 rounded-md mb-4"></div>
+                  <div className="h-6 bg-gray-200 rounded mb-2 w-3/4"></div>
+                  <div className="h-4 bg-gray-200 rounded mb-4 w-1/2"></div>
+                  <div className="h-10 bg-gray-200 rounded"></div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className='product-grid'>
+              {newArrivals.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
@@ -211,11 +302,24 @@ const Index = () => {
               View All <ArrowRight className='ml-1 h-4 w-4' />
             </Link>
           </div>
-          <div className='product-grid'>
-            {onSaleProducts.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
+          {isLoading ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              {[1, 2, 3, 4].map((i) => (
+                <div key={i} className="bg-white rounded-lg shadow-md p-4 animate-pulse">
+                  <div className="w-full h-48 bg-gray-200 rounded-md mb-4"></div>
+                  <div className="h-6 bg-gray-200 rounded mb-2 w-3/4"></div>
+                  <div className="h-4 bg-gray-200 rounded mb-4 w-1/2"></div>
+                  <div className="h-10 bg-gray-200 rounded"></div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className='product-grid'>
+              {onSaleProducts.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
