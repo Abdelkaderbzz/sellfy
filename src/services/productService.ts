@@ -137,3 +137,20 @@ export async function fetchProductById(id: number): Promise<Product | null> {
     return null;
   }
 }
+export async function fetchBrands(id: number): Promise<Product | null> {
+  try {
+    const { data: dbProduct, error } = await supabase
+      .from('products')
+      .select('*')
+      .eq('id', id)
+      .single();
+
+    if (error) throw error;
+    if (!dbProduct) return null;
+
+    return dbProduct
+  } catch (error) {
+    console.error(`Error fetching product with ID ${id}:`, error);
+    return null;
+  }
+}
