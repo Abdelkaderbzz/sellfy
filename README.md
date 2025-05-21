@@ -1,73 +1,112 @@
-# Welcome to your Lovable project
+# Sellfy - Modern E-commerce Platform
+## Overview
+Sellfy is a modern e-commerce platform built with React and TypeScript. It provides a comprehensive shopping experience with features like product browsing, cart management, wishlist functionality, and user profiles. The application uses Supabase as its backend service for data storage and retrieval.
 
-## Project info
-
-**URL**: https://lovable.dev/projects/fcb5d1f6-46c8-4cf1-9bf6-943d8d9b5743
-
-## How can I edit this code?
-
-There are several ways of editing your application.
-
-**Use Lovable**
-
-Simply visit the [Lovable Project](https://lovable.dev/projects/fcb5d1f6-46c8-4cf1-9bf6-943d8d9b5743) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+## Features
+- Product Management : Browse, search, and filter products by various criteria
+- Shopping Cart : Add products to cart, update quantities, and checkout
+- Wishlist : Save favorite products for later
+- User Profiles : Manage user information and preferences
+- Categories & Brands : Browse products by categories and brands
+- Responsive Design : Mobile-friendly interface
+- Theme Support : Light and dark mode
+## Tech Stack
+- Frontend Framework : React with TypeScript
+- Build Tool : Vite
+- UI Components : shadcn-ui with Radix UI primitives
+- Styling : Tailwind CSS
+- State Management : React Context API
+- Data Fetching : TanStack React Query
+- Backend/Database : Supabase
+- Routing : React Router
+- Form Handling : React Hook Form with Zod validation
+## Project Structure
 ```
+src/
+├── components/      # UI components organized by feature
+│   ├── brands/      # Brand-related components
+│   ├── layout/      # Layout components (header, footer, etc.)
+│   ├── products/    # Product-related components
+│   ├── providers/   # Context providers
+│   ├── search/      # Search functionality components
+│   └── ui/          # Reusable UI components
+├── config/          # Application configuration
+├── contexts/        # React context providers
+├── data/            # Mock data and constants
+├── hooks/           # Custom React hooks
+├── lib/             # Utility functions and services
+├── pages/           # Application pages/routes
+├── services/        # API and business logic
+└── types/           # TypeScript type definitions
+```
+## Prerequisites
+- Node.js (Latest LTS version recommended)
+- npm or bun package manager
+- Supabase account (for backend functionality)
+## Getting Started
+1. Clone the repository
+```
+git clone <repository-url>
+cd sellfy
+```
+2. Install dependencies
+```
+npm install
+# or if using bun
+bun install
+```
+3. Set up environment variables
+```
+cp .env.example .env
+```
+Edit the .env file and add your Supabase project URL and anonymous key:
 
-**Edit a file directly in GitHub**
+```
+VITE_SUPABASE_URL=your-supabase-project-url
+VITE_SUPABASE_ANON_KEY=your-supabase-anon-key
+```
+4. Start the development server
+```
+npm run dev
+# or if using bun
+bun dev
+```
+The application will be available at http://localhost:5173
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## Available Scripts
+- npm run dev - Start development server
+- npm run build - Build for production
+- npm run build:dev - Build for development
+- npm run lint - Run ESLint
+- npm run preview - Preview production build
+## State Management
+### Cart
+The application uses a CartContext to manage the shopping cart state. Features include:
 
-**Use GitHub Codespaces**
+- Adding items to cart
+- Removing items from cart
+- Updating item quantities
+- Calculating subtotals
+- Persisting cart data in localStorage
+### Wishlist
+The WishlistContext manages the user's wishlist with features like:
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+- Adding products to wishlist
+- Removing products from wishlist
+- Checking if a product is in the wishlist
+- Toggling wishlist status
+- Persisting wishlist data in localStorage
+## Data Management
+The application uses Supabase as its backend service. The productService.ts file contains functions for fetching and manipulating product data.
 
-## What technologies are used for this project?
+## Styling
+The application uses Tailwind CSS for styling with shadcn-ui components. It also supports theme switching between light and dark modes using next-themes.
 
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/fcb5d1f6-46c8-4cf1-9bf6-943d8d9b5743) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+## Contributing
+1. Fork the repository
+2. Create your feature branch ( git checkout -b feature/amazing-feature )
+3. Commit your changes ( git commit -m 'Add some amazing feature' )
+4. Push to the branch ( git push origin feature/amazing-feature )
+5. Open a Pull Request
+## License
+This project is proprietary. All rights reserved.
