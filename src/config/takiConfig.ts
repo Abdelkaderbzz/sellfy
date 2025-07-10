@@ -5,7 +5,7 @@ export const initializeTakiPopups = () => {
     name: 'Adem',
     memberId: '73924',
     appId: '672b9ce26e32455831f9192d',
-    lang: 'ar',
+    lang: 'en',
     meta_data: {
       age: 18,
       state: 'Manouba',
