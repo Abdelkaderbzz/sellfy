@@ -1,10 +1,10 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AppProviders } from './components/providers/AppProviders';
 import { routes } from './config/routes';
-import { initializeTakiPopups } from './config/takiConfig';
+// import { initializeTakiPopups } from './config/takiConfig';
 
 // Initialize TakiPopups
-initializeTakiPopups();
+// initializeTakiPopups();
 
 const App = () => {
   return (
