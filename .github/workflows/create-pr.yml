@@ -11,18 +11,50 @@ jobs:
     permissions:
       contents: read
       pull-requests: write
+      repository-projects: read
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create Pull Request
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITHUB_REPOSITORY: ${{ github.repository }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SOURCE_BRANCH: ${{ github.ref_name }}
           COMMIT_SHA: ${{ github.sha }}
           ACTOR: ${{ github.actor }}
         run: |
-          chmod +x scripts/create-pr.sh
-          ./scripts/create-pr.sh
+          # Team members (replace with actual GitHub usernames)
+          USERS=("Abdelkaderbzzz")
+
+          # Pick random reviewer (skip if only one user and it's the author)
+          if [ ${#USERS[@]} -gt 1 ] || [ "${USERS[0]}" != "$ACTOR" ]; then
+            RANDOM_INDEX=$((RANDOM % ${#USERS[@]}))
+            REVIEWER=${USERS[$RANDOM_INDEX]}
+          fi
+
+          # Create PR title and body
+          TITLE="PR: $SOURCE_BRANCH → main"
+          BODY="🚀 Auto-created Pull Request
+
+          - Branch: $SOURCE_BRANCH
+          - Commit: ${COMMIT_SHA:0:8}
+          - Author: $ACTOR
+          "
+
+          # Check if PR already exists
+          if gh pr list --head "$SOURCE_BRANCH" --base main --json number --jq '.[0].number' | grep -q .; then
+            echo "Pull request already exists for branch $SOURCE_BRANCH"
+            exit 0
+          fi
+
+          # Create the pull request using GitHub CLI
+          if [ -n "$REVIEWER" ] && [ "$REVIEWER" != "$ACTOR" ]; then
+            gh pr create --title "$TITLE" --body "$BODY" --base main --head "$SOURCE_BRANCH" --reviewer "$REVIEWER"
+          else
+            gh pr create --title "$TITLE" --body "$BODY" --base main --head "$SOURCE_BRANCH"
+          fi
+
+          echo "Pull request created successfully!"
