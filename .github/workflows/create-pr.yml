@@ -27,7 +27,7 @@ jobs:
           ACTOR: ${{ github.actor }}
         run: |
           # Team members (replace with actual GitHub usernames)
-          USERS=("Abdelkaderbzzz")
+          USERS=("Abdelkaderbzz")
 
           # Pick random reviewer (skip if only one user and it's the author)
           if [ ${#USERS[@]} -gt 1 ] || [ "${USERS[0]}" != "$ACTOR" ]; then
