@@ -7,7 +7,7 @@ REPO_NAME=$(echo "$GITHUB_REPOSITORY" | cut -d'/' -f2)
 TARGET_BRANCH="main"
 
 # Team members usernames (replace with actual GitHub usernames)
-USERS=("user1" "user2" "user3" "user4")
+USERS=("Abdelkaderbzzz")
 
 # Pick random reviewer
 RANDOM_INDEX=$((RANDOM % ${#USERS[@]}))
