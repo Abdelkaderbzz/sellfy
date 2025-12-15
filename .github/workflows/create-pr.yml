@@ -14,14 +14,14 @@ jobs:
       repository-projects: read
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Create Pull Request
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        - name: Checkout code
+          uses: actions/checkout@v4
+          with:
+            token: ${{ secrets.PAT_TOKEN || secrets.GITHUB_TOKEN }}
+ 
+        - name: Create Pull Request
+          env:
+            GH_TOKEN: ${{ secrets.PAT_TOKEN || secrets.GITHUB_TOKEN }}
           SOURCE_BRANCH: ${{ github.ref_name }}
           COMMIT_SHA: ${{ github.sha }}
           ACTOR: ${{ github.actor }}

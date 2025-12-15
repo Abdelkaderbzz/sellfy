@@ -1,0 +1,30 @@
+name: Auto Create Pull Request (Alternative)
+
+on:
+  push:
+    branches:
+      - 'feature/**'
+
+jobs:
+  create-pull-request:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.ref_name }}
+          base: main
+          title: 'PR: ${{ github.ref_name }} → main'
+          body: |
+            🚀 Auto-created Pull Request
+
+            - Branch: ${{ github.ref_name }}
+            - Commit: ${{ github.sha }}
+            - Author: ${{ github.actor }}
+          reviewers: Abdelkaderbzz
+          delete-branch: true
